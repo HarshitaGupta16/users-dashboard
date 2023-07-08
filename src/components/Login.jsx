@@ -5,6 +5,7 @@ import {
   GoogleAuthProvider,
   signInWithEmailAndPassword,
   signInWithPopup,
+  getAdditionalUserInfo,
 } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
@@ -29,11 +30,13 @@ const Login = () => {
     }
     try {
       const result = await signInWithEmailAndPassword(auth, email, password);
+
       setAlert({
         open: true,
-        message: `Login successful! Welcom ${result.user.email}`,
+        message: `Login successful! Welcome ${result.user.email}`,
         type: "success",
       });
+
       navigate("/home");
     } catch (error) {
       setAlert({
@@ -49,12 +52,23 @@ const Login = () => {
   const signInWithGoogle = () => {
     signInWithPopup(auth, googleProvider)
       .then((res) => {
-        setAlert({
-          open: true,
-          message: `Sign In Successful. Welcome ${res.user.email}`,
-          type: "success",
-        });
-        navigate("/home");
+        let isNewUser = getAdditionalUserInfo(res).isNewUser;
+        if (isNewUser) {
+          setAlert({
+            open: true,
+            message:
+              "User not registered with this email. Only super admin can create users.",
+            type: "error",
+          });
+          res.user.delete();
+        } else {
+          setAlert({
+            open: true,
+            message: `Sign In Successful. Welcome ${res.user.email}`,
+            type: "success",
+          });
+          navigate("/home");
+        }
       })
       .catch((error) => {
         setAlert({
