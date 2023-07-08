@@ -1,0 +1,10 @@
+.background {
+  background-image: url(../assets/logbackground.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
