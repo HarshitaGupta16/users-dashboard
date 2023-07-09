@@ -16,7 +16,7 @@ import { useDashboardContext } from "../context/DashboardContextProvider";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
-const DisplayUsers = () => {
+const DisplayUsers = ({ role }) => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState({ column: "", type: "ASC" });
@@ -51,8 +51,10 @@ const DisplayUsers = () => {
   const { setAlert } = useDashboardContext();
 
   const getUsers = async () => {
+    setLoading(true);
     const data = await getDocs(usersCollectionRef);
     setUsers(data.docs.map((doc) => doc.data()));
+    setLoading(false);
   };
 
   const handleUpdate = async (id, name, email, role, type, status) => {
@@ -104,9 +106,7 @@ const DisplayUsers = () => {
   };
 
   useEffect(() => {
-    setLoading(true);
     getUsers();
-    setLoading(false);
   }, [handleDelete, handleUpdate]);
 
   const handlePage = (selectedPage) => {
@@ -121,6 +121,9 @@ const DisplayUsers = () => {
   };
 
   const handleSearch = () => {
+    if (role !== "All" && role !== "") {
+      return sortedUsers.filter((user) => user.role === role);
+    }
     return sortedUsers.filter(
       (user) =>
         user.name.toLowerCase().includes(searchText) ||
@@ -188,7 +191,7 @@ const DisplayUsers = () => {
         <div className={styles.body}>
           {loading ? (
             <CircularProgress />
-          ) : (
+          ) : searchText !== "" ? (
             handleSearch(sortedUsers)
               .slice(page * 5 - 5, page * 5)
               .map((user, i) => {
@@ -201,6 +204,17 @@ const DisplayUsers = () => {
                   />
                 );
               })
+          ) : (
+            sortedUsers.slice(page * 5 - 5, page * 5).map((user, i) => {
+              return (
+                <SingleUser
+                  key={i}
+                  user={user}
+                  handleDelete={handleDelete}
+                  handleUpdate={handleUpdate}
+                />
+              );
+            })
           )}
           {handleSearch(sortedUsers).length === 0 && !loading && (
             <div style={{ alignSelf: "center" }}>No data found</div>

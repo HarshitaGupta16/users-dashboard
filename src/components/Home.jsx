@@ -11,6 +11,7 @@ const Home = () => {
 
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [profilePic, setProfilePic] = useState("");
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     getData();
@@ -41,13 +42,15 @@ const Home = () => {
       <Header
         title={showCreateUser ? "Create Users" : "Users"}
         profilePic={profilePic}
+        role={role}
+        setRole={setRole}
       />
       {showCreateUser ? (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <CreateUser />
         </div>
       ) : (
-        <DisplayUsers />
+        <DisplayUsers role={role} />
       )}
     </div>
   );

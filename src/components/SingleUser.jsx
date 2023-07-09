@@ -70,7 +70,10 @@ const SingleUser = ({ user, handleDelete, handleUpdate }) => {
           </div>
           <IconButton
             disabled={!isAdmin}
-            style={{ width: "10%" }}
+            style={{
+              width: "10%",
+              color: !isAdmin ? "rgba(0, 0, 0, 0.26)" : "#1976d2",
+            }}
             onClick={() => setIsEdit(true)}
           >
             <EditIcon />
@@ -129,7 +132,11 @@ const SingleUser = ({ user, handleDelete, handleUpdate }) => {
         </>
       )}
       <div style={{ width: "10%" }}>
-        <IconButton disabled={!isAdmin} onClick={() => handleDelete(user.uid)}>
+        <IconButton
+          disabled={!isAdmin}
+          onClick={() => handleDelete(user.uid)}
+          style={{ color: !isAdmin ? "rgba(0, 0, 0, 0.26)" : "red" }}
+        >
           <DeleteIcon />
         </IconButton>
       </div>
