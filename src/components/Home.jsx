@@ -42,9 +42,13 @@ const Home = () => {
         title={showCreateUser ? "Create Users" : "Users"}
         profilePic={profilePic}
       />
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        {showCreateUser ? <CreateUser /> : <DisplayUsers />}
-      </div>
+      {showCreateUser ? (
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <CreateUser />
+        </div>
+      ) : (
+        <DisplayUsers />
+      )}
     </div>
   );
 };

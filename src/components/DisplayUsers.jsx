@@ -17,9 +17,11 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const DisplayUsers = () => {
-  const [users, setUsers] = useState();
+  const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState({ column: "", type: "ASC" });
+  const [searchText, setSearchText] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const usersCollectionRef = collection(db, "users");
   let sortedUsers = users;
@@ -102,7 +104,9 @@ const DisplayUsers = () => {
   };
 
   useEffect(() => {
+    setLoading(true);
     getUsers();
+    setLoading(false);
   }, [handleDelete, handleUpdate]);
 
   const handlePage = (selectedPage) => {
@@ -116,18 +120,15 @@ const DisplayUsers = () => {
     return;
   };
 
-  const handleSearch = (e) => {
-    setSearchedUsers(
-      sortedUsers.filter(
-        (user) =>
-          user.name.toLowerCase().includes(searchText) ||
-          user.email.toLowerCase().includes(searchText) ||
-          user.role.toLowerCase().includes(searchText) ||
-          user.type.toLowerCase().includes(searchText) ||
-          user.status.toLowerCase().includes(searchText)
-      )
+  const handleSearch = () => {
+    return sortedUsers.filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchText) ||
+        user.email.toLowerCase().includes(searchText) ||
+        user.role.toLowerCase().includes(searchText) ||
+        user.type.toLowerCase().includes(searchText) ||
+        user.status.toLowerCase().includes(searchText)
     );
-    setSearchText("");
   };
 
   const columns = ["Name", "Email", "Role", "Type", "Status", ""];
@@ -135,14 +136,12 @@ const DisplayUsers = () => {
   return (
     <div>
       <div className={styles.search}>
-        <label>
-          Search:
-          <input
-            onChange={(e) => {
-              setSearchText(e.target.value.toLowerCase()), handleSearch;
-            }}
-          />
-        </label>
+        <label>Search:</label>
+        <input
+          onChange={(e) => {
+            setSearchText(e.target.value.toLowerCase());
+          }}
+        />
       </div>
       <div
         style={{
@@ -168,39 +167,43 @@ const DisplayUsers = () => {
               {header}
               {header !== "" && (
                 <>
-                  <IconButton
+                  <ArrowUpwardIcon
                     onClick={() =>
                       setSortBy({ column: header.toLowerCase(), type: "ASC" })
                     }
-                  >
-                    <ArrowUpwardIcon />
-                  </IconButton>
-                  <IconButton
+                    style={{ cursor: "pointer", color: "rgba(0, 0, 0, 0.54)" }}
+                  />
+
+                  <ArrowDownwardIcon
                     onClick={() =>
                       setSortBy({ column: header.toLowerCase(), type: "DESC" })
                     }
-                  >
-                    <ArrowDownwardIcon />
-                  </IconButton>
+                    style={{ cursor: "pointer", color: "rgba(0, 0, 0, 0.54)" }}
+                  />
                 </>
               )}
             </div>
           ))}
         </div>
         <div className={styles.body}>
-          {!sortedUsers.length ? (
+          {loading ? (
             <CircularProgress />
           ) : (
-            sortedUsers.slice(page * 5 - 5, page * 5).map((user, i) => {
-              return (
-                <SingleUser
-                  key={i}
-                  user={user}
-                  handleDelete={handleDelete}
-                  handleUpdate={handleUpdate}
-                />
-              );
-            })
+            handleSearch(sortedUsers)
+              .slice(page * 5 - 5, page * 5)
+              .map((user, i) => {
+                return (
+                  <SingleUser
+                    key={i}
+                    user={user}
+                    handleDelete={handleDelete}
+                    handleUpdate={handleUpdate}
+                  />
+                );
+              })
+          )}
+          {handleSearch(sortedUsers).length === 0 && !loading && (
+            <div style={{ alignSelf: "center" }}>No data found</div>
           )}
         </div>
       </div>
@@ -217,24 +220,26 @@ const DisplayUsers = () => {
           Previous
         </Button>
         <span>
-          {[...Array(Math.ceil(sortedUsers.length / 5))].map((_, i) => {
-            return (
-              <span
-                onClick={() => handlePage(i + 1)}
-                key={i}
-                style={{
-                  border: "0.5px solid #ccc",
-                  padding: "8px 15px",
+          {[...Array(Math.ceil(handleSearch(sortedUsers).length / 5))].map(
+            (_, i) => {
+              return (
+                <span
+                  onClick={() => handlePage(i + 1)}
+                  key={i}
+                  style={{
+                    border: "0.5px solid #ccc",
+                    padding: "8px 15px",
 
-                  cursor: "pointer",
-                  backgroundColor: page === i + 1 ? "#1976d2" : "white",
-                  color: page === i + 1 ? "white" : "black",
-                }}
-              >
-                {i + 1}
-              </span>
-            );
-          })}
+                    cursor: "pointer",
+                    backgroundColor: page === i + 1 ? "#1976d2" : "white",
+                    color: page === i + 1 ? "white" : "black",
+                  }}
+                >
+                  {i + 1}
+                </span>
+              );
+            }
+          )}
         </span>
         <Button
           onClick={() => handlePage(page + 1)}

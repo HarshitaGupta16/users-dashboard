@@ -20,3 +20,23 @@
   justify-content: flex-end;
   margin-right: 10px;
 }
+
+.search {
+  display: flex;
+  justify-content: flex-end;
+  margin-right: 15px;
+  margin-top: 15px;
+  align-items: center;
+}
+
+.search label {
+  margin-right: 15px;
+  color: rgb(0, 0, 0, 0.74);
+}
+
+.search input {
+  border: 1px solid #ccc;
+  padding: 12px;
+  border-radius: 3px;
+  width: 200px;
+}
