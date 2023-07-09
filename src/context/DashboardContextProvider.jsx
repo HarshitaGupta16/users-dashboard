@@ -19,6 +19,7 @@ const DashboardContextProvider = ({ children }) => {
       name: "Super Admin",
     },
   ]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -32,7 +33,15 @@ const DashboardContextProvider = ({ children }) => {
 
   return (
     <dashboardContext.Provider
-      value={{ alert, setAlert, user, userDetails, setUserDetails }}
+      value={{
+        alert,
+        setAlert,
+        user,
+        userDetails,
+        setUserDetails,
+        isAdmin,
+        setIsAdmin,
+      }}
     >
       {children}
     </dashboardContext.Provider>

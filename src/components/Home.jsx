@@ -7,7 +7,7 @@ import { db } from "../firebase";
 import DisplayUsers from "./DisplayUsers";
 
 const Home = () => {
-  const { user } = useDashboardContext();
+  const { user, setIsAdmin } = useDashboardContext();
 
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [profilePic, setProfilePic] = useState("");
@@ -28,8 +28,10 @@ const Home = () => {
       setProfilePic(doc.data().imageURL);
       if (doc.data().role === "Administrator") {
         setShowCreateUser(true);
+        setIsAdmin(true);
       } else {
         setShowCreateUser(false);
+        setIsAdmin(false);
       }
     });
   };

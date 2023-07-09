@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/Login.jsx";
 import Home from "./components/Home.jsx";
 import DisplayUsers from "./components/DisplayUsers.jsx";
+import Header from "./components/Header.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -20,7 +21,12 @@ const appRouter = createBrowserRouter([
       { path: "/home", element: <Home /> },
       {
         path: "/display-users",
-        element: <DisplayUsers />,
+        element: (
+          <>
+            <Header title="Users" />
+            <DisplayUsers />
+          </>
+        ),
       },
     ],
   },

@@ -3,6 +3,9 @@ import {
   CircularProgress,
   FormControl,
   IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -26,7 +29,7 @@ const CreateUser = () => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { setAlert, setUserDetails, userDetails } = useDashboardContext();
+  const { setAlert, setUserDetails } = useDashboardContext();
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -63,7 +66,11 @@ const CreateUser = () => {
             });
             setUserDetails((prevState) => [
               ...prevState,
-              { uid: result.user.uid, imageURL: imageURL, name: name },
+              {
+                uid: result.user.uid,
+                imageURL: imageURL,
+                name: name,
+              },
             ]);
             setAlert({
               open: true,
@@ -135,32 +142,53 @@ const CreateUser = () => {
           fullWidth
           className={styles.textfield}
         />
-        <TextField
-          label="Enter Role"
-          variant="outlined"
-          value={role}
-          required
-          onChange={(e) => setRole(e.target.value)}
-          fullWidth
-          className={styles.textfield}
-        />
-        <TextField
-          label="Enter Type"
-          variant="outlined"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
-          fullWidth
-          className={styles.textfield}
-        />
-        <TextField
-          label="Enter Status"
-          variant="outlined"
-          value={status}
-          onChange={(e) => setStatus(e.target.value)}
-          fullWidth
-          className={styles.textfield}
-        />
-        <IconButton className={styles.uploadImage}>
+        <FormControl fullWidth className={styles.textfield}>
+          <InputLabel id="select-role">Select Role</InputLabel>
+          <Select
+            label="Select Role"
+            labelId="select-role"
+            variant="outlined"
+            value={role}
+            required
+            onChange={(e) => setRole(e.target.value)}
+          >
+            <MenuItem value={"Administrator"}>Administrator</MenuItem>
+            <MenuItem value="Writer">Writer</MenuItem>
+            <MenuItem value="Author">Author</MenuItem>
+            <MenuItem value="Contributor">Contributor</MenuItem>
+            <MenuItem value="Editor">Editor</MenuItem>
+            <MenuItem value="Manager">Manager</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth className={styles.textfield}>
+          <InputLabel id="select-type">Select Type</InputLabel>
+          <Select
+            label="Select Type"
+            labelId="select-type"
+            variant="outlined"
+            value={type}
+            onChange={(e) => setType(e.target.value)}
+            fullWidth
+          >
+            <MenuItem value="Admin">Admin</MenuItem>
+            <MenuItem value="Staff">Staff</MenuItem>
+          </Select>
+        </FormControl>
+        <FormControl fullWidth className={styles.textfield}>
+          <InputLabel id="select-status">Select Status</InputLabel>
+          <Select
+            label="Select Status"
+            labelId="status-status"
+            variant="outlined"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+            fullWidth
+          >
+            <MenuItem value="Active">Active</MenuItem>
+            <MenuItem value="Disabled">Disabled</MenuItem>
+          </Select>
+        </FormControl>
+        <label className={styles.uploadImage}>
           <input
             type="file"
             accept="image/*"
@@ -170,7 +198,7 @@ const CreateUser = () => {
           />
           <AddPhotoAlternateIcon style={{ marginRight: 35 }} />
           Upload Profile Picture *
-        </IconButton>
+        </label>
         <Button
           variant="contained"
           style={{ padding: 10, textTransform: "none" }}
