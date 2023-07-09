@@ -10,13 +10,41 @@ import {
 import React, { useEffect, useState } from "react";
 import { db } from "../firebase";
 import styles from "./DisplayUsers.module.css";
-import { CircularProgress } from "@mui/material";
+import { Button, CircularProgress, IconButton, TextField } from "@mui/material";
 import SingleUser from "./SingleUser";
 import { useDashboardContext } from "../context/DashboardContextProvider";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 const DisplayUsers = () => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState();
+  const [page, setPage] = useState(1);
+  const [sortBy, setSortBy] = useState({ column: "", type: "ASC" });
+
   const usersCollectionRef = collection(db, "users");
+  let sortedUsers = users;
+
+  if (sortBy.type === "ASC") {
+    sortedUsers = users.sort((a, b) => {
+      if (a[sortBy.column]?.toLowerCase() < b[sortBy.column]?.toLowerCase()) {
+        return -1;
+      }
+      if (a[sortBy.column]?.toLowerCase() > b[sortBy.column]?.toLowerCase()) {
+        return 1;
+      }
+      return 0;
+    });
+  } else if (sortBy.type === "DESC") {
+    sortedUsers = users.sort((a, b) => {
+      if (a[sortBy.column]?.toLowerCase() < b[sortBy.column]?.toLowerCase()) {
+        return 1;
+      }
+      if (a[sortBy.column]?.toLowerCase() > b[sortBy.column]?.toLowerCase()) {
+        return -1;
+      }
+      return 0;
+    });
+  }
 
   const { setAlert } = useDashboardContext();
 
@@ -77,45 +105,148 @@ const DisplayUsers = () => {
     getUsers();
   }, [handleDelete, handleUpdate]);
 
+  const handlePage = (selectedPage) => {
+    if (
+      selectedPage >= 1 &&
+      selectedPage <= Math.ceil(users.length / 5) &&
+      selectedPage !== page
+    ) {
+      setPage(selectedPage);
+    }
+    return;
+  };
+
+  const handleSearch = (e) => {
+    setSearchedUsers(
+      sortedUsers.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchText) ||
+          user.email.toLowerCase().includes(searchText) ||
+          user.role.toLowerCase().includes(searchText) ||
+          user.type.toLowerCase().includes(searchText) ||
+          user.status.toLowerCase().includes(searchText)
+      )
+    );
+    setSearchText("");
+  };
+
   const columns = ["Name", "Email", "Role", "Type", "Status", ""];
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "20px 30px",
-        border: "1px solid #ccc",
-        margin: "10px",
-      }}
-    >
-      <div className={styles.header}>
-        {columns.map((header) => (
-          <div
-            style={{
-              width: header === "Type" || header === "Status" ? "10%" : "20%",
+    <div>
+      <div className={styles.search}>
+        <label>
+          Search:
+          <input
+            onChange={(e) => {
+              setSearchText(e.target.value.toLowerCase()), handleSearch;
             }}
-          >
-            {header}
-          </div>
-        ))}
+          />
+        </label>
       </div>
-      <div className={styles.body}>
-        {!users.length ? (
-          <CircularProgress />
-        ) : (
-          users.map((user) => {
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          flexDirection: "column",
+          alignItems: "center",
+          padding: "20px 30px",
+          border: "1px solid #ccc",
+          margin: "10px",
+        }}
+      >
+        <div className={styles.header}>
+          {columns.map((header) => (
+            <div
+              style={{
+                width: header === "Type" || header === "Status" ? "10%" : "20%",
+                display: "flex",
+                justifyContent: "start",
+                alignItems: "self-start",
+              }}
+            >
+              {header}
+              {header !== "" && (
+                <>
+                  <IconButton
+                    onClick={() =>
+                      setSortBy({ column: header.toLowerCase(), type: "ASC" })
+                    }
+                  >
+                    <ArrowUpwardIcon />
+                  </IconButton>
+                  <IconButton
+                    onClick={() =>
+                      setSortBy({ column: header.toLowerCase(), type: "DESC" })
+                    }
+                  >
+                    <ArrowDownwardIcon />
+                  </IconButton>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+        <div className={styles.body}>
+          {!sortedUsers.length ? (
+            <CircularProgress />
+          ) : (
+            sortedUsers.slice(page * 5 - 5, page * 5).map((user, i) => {
+              return (
+                <SingleUser
+                  key={i}
+                  user={user}
+                  handleDelete={handleDelete}
+                  handleUpdate={handleUpdate}
+                />
+              );
+            })
+          )}
+        </div>
+      </div>
+      <div className={styles.pagination}>
+        <Button
+          onClick={() => handlePage(page - 1)}
+          style={{
+            textTransform: "none",
+            color: "gray",
+            border: "1px solid #ccc",
+            borderRadius: 0,
+          }}
+        >
+          Previous
+        </Button>
+        <span>
+          {[...Array(Math.ceil(sortedUsers.length / 5))].map((_, i) => {
             return (
-              <SingleUser
-                user={user}
-                handleDelete={handleDelete}
-                handleUpdate={handleUpdate}
-              />
+              <span
+                onClick={() => handlePage(i + 1)}
+                key={i}
+                style={{
+                  border: "0.5px solid #ccc",
+                  padding: "8px 15px",
+
+                  cursor: "pointer",
+                  backgroundColor: page === i + 1 ? "#1976d2" : "white",
+                  color: page === i + 1 ? "white" : "black",
+                }}
+              >
+                {i + 1}
+              </span>
             );
-          })
-        )}
+          })}
+        </span>
+        <Button
+          onClick={() => handlePage(page + 1)}
+          style={{
+            textTransform: "none",
+            color: "gray",
+            border: "1px solid #ccc",
+            borderRadius: 0,
+          }}
+        >
+          Next
+        </Button>
       </div>
     </div>
   );
