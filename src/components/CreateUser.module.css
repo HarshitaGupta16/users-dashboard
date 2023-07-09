@@ -1,0 +1,20 @@
+.uploadImage {
+  align-self: flex-start;
+  font-size: 1rem !important;
+  margin-bottom: 12px;
+}
+
+.uploadImage:hover {
+  background: none !important;
+}
+
+.textfield {
+  margin-bottom: 30px !important;
+  background: white;
+  border-radius: 5px;
+  height: 35px;
+}
+
+.link {
+  text-decoration: none !important;
+}

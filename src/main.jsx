@@ -6,6 +6,7 @@ import DashboardContextProvider from "./context/DashboardContextProvider.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Login from "./components/Login.jsx";
 import Home from "./components/Home.jsx";
+import DisplayUsers from "./components/DisplayUsers.jsx";
 
 const appRouter = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const appRouter = createBrowserRouter([
         element: <Login />,
       },
       { path: "/home", element: <Home /> },
+      {
+        path: "/display-users",
+        element: <DisplayUsers />,
+      },
     ],
   },
 ]);
