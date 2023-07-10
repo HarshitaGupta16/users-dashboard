@@ -11,8 +11,8 @@ import Logout from "./Logout";
 import { useDashboardContext } from "../context/DashboardContextProvider";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 
-const Header = ({ title, setRole }) => {
-  const { userDetails, user } = useDashboardContext();
+const Header = ({ title }) => {
+  const { userDetails, user, setRole } = useDashboardContext();
   const [profilePicURL, setProfilePicURL] = useState("");
   const [userName, setUserName] = useState("");
 

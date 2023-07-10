@@ -13,9 +13,9 @@ const Home = () => {
   const [profilePic, setProfilePic] = useState("");
   const [role, setRole] = useState("");
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   const getData = async () => {
     const userData = query(
@@ -42,15 +42,13 @@ const Home = () => {
       <Header
         title={showCreateUser ? "Create Users" : "Users"}
         profilePic={profilePic}
-        role={role}
-        setRole={setRole}
       />
       {showCreateUser ? (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <CreateUser />
         </div>
       ) : (
-        <DisplayUsers role={role} />
+        <DisplayUsers />
       )}
     </div>
   );

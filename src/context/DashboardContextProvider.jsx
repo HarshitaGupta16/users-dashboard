@@ -20,6 +20,7 @@ const DashboardContextProvider = ({ children }) => {
     },
   ]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {
@@ -41,6 +42,8 @@ const DashboardContextProvider = ({ children }) => {
         setUserDetails,
         isAdmin,
         setIsAdmin,
+        role,
+        setRole,
       }}
     >
       {children}

@@ -15,13 +15,17 @@ import SingleUser from "./SingleUser";
 import { useDashboardContext } from "../context/DashboardContextProvider";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import { useNavigate } from "react-router-dom";
 
-const DisplayUsers = ({ role }) => {
+const DisplayUsers = () => {
   const [users, setUsers] = useState([]);
   const [page, setPage] = useState(1);
   const [sortBy, setSortBy] = useState({ column: "", type: "ASC" });
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
+  const [searchedResults, setSearchedResults] = useState([]);
+
+  const navigate = useNavigate();
 
   const usersCollectionRef = collection(db, "users");
   let sortedUsers = users;
@@ -48,7 +52,7 @@ const DisplayUsers = ({ role }) => {
     });
   }
 
-  const { setAlert } = useDashboardContext();
+  const { setAlert, role } = useDashboardContext();
 
   const getUsers = async () => {
     setLoading(true);
@@ -122,16 +126,32 @@ const DisplayUsers = ({ role }) => {
 
   const handleSearch = () => {
     if (role !== "All" && role !== "") {
-      return sortedUsers.filter((user) => user.role === role);
+      setSearchedResults(sortedUsers.filter((user) => user.role === role));
+    } else if (searchText !== "") {
+      let result = sortedUsers.filter(
+        (user) =>
+          user.name.toLowerCase().includes(searchText) ||
+          user.email.toLowerCase().includes(searchText) ||
+          user.role.toLowerCase().includes(searchText) ||
+          user.type.toLowerCase().includes(searchText) ||
+          user.status.toLowerCase().includes(searchText)
+      );
+      setSearchedResults(result);
+    } else if (role === "All") {
+      setSearchedResults(sortedUsers);
     }
-    return sortedUsers.filter(
-      (user) =>
-        user.name.toLowerCase().includes(searchText) ||
-        user.email.toLowerCase().includes(searchText) ||
-        user.role.toLowerCase().includes(searchText) ||
-        user.type.toLowerCase().includes(searchText) ||
-        user.status.toLowerCase().includes(searchText)
-    );
+  };
+
+  useEffect(() => {
+    handleSearch();
+  }, [role]);
+
+  const paginationNumbers = () => {
+    if (searchText !== "" || role !== "All" || role !== "")
+      return [...Array(Math.ceil(sortedUsers.length / 5))];
+    else {
+      return [...Array(Math.ceil(handleSearch(sortedUsers).length / 5))];
+    }
   };
 
   const columns = ["Name", "Email", "Role", "Type", "Status", ""];
@@ -139,12 +159,22 @@ const DisplayUsers = ({ role }) => {
   return (
     <div>
       <div className={styles.search}>
-        <label>Search:</label>
-        <input
-          onChange={(e) => {
-            setSearchText(e.target.value.toLowerCase());
-          }}
-        />
+        <Button
+          onClick={() => navigate(-1)}
+          variant="outlined"
+          className={styles.backBtn}
+        >
+          ⬅️ Back
+        </Button>
+
+        <div>
+          <label>Search:</label>
+          <input
+            onChange={(e) => {
+              setSearchText(e.target.value.toLowerCase());
+            }}
+          />
+        </div>
       </div>
       <div
         style={{
@@ -191,19 +221,17 @@ const DisplayUsers = ({ role }) => {
         <div className={styles.body}>
           {loading ? (
             <CircularProgress />
-          ) : searchText !== "" ? (
-            handleSearch(sortedUsers)
-              .slice(page * 5 - 5, page * 5)
-              .map((user, i) => {
-                return (
-                  <SingleUser
-                    key={i}
-                    user={user}
-                    handleDelete={handleDelete}
-                    handleUpdate={handleUpdate}
-                  />
-                );
-              })
+          ) : searchText !== "" || role !== "All" || role !== "" ? (
+            searchedResults.slice(page * 5 - 5, page * 5).map((user, i) => {
+              return (
+                <SingleUser
+                  key={i}
+                  user={user}
+                  handleDelete={handleDelete}
+                  handleUpdate={handleUpdate}
+                />
+              );
+            })
           ) : (
             sortedUsers.slice(page * 5 - 5, page * 5).map((user, i) => {
               return (
@@ -216,9 +244,11 @@ const DisplayUsers = ({ role }) => {
               );
             })
           )}
-          {handleSearch(sortedUsers).length === 0 && !loading && (
-            <div style={{ alignSelf: "center" }}>No data found</div>
-          )}
+          {searchedResults.length === 0 &&
+            !loading &&
+            (searchText !== "" || role !== "" || role !== "All") && (
+              <div style={{ alignSelf: "center" }}>No data found</div>
+            )}
         </div>
       </div>
       <div className={styles.pagination}>
@@ -234,26 +264,24 @@ const DisplayUsers = ({ role }) => {
           Previous
         </Button>
         <span>
-          {[...Array(Math.ceil(handleSearch(sortedUsers).length / 5))].map(
-            (_, i) => {
-              return (
-                <span
-                  onClick={() => handlePage(i + 1)}
-                  key={i}
-                  style={{
-                    border: "0.5px solid #ccc",
-                    padding: "8px 15px",
+          {paginationNumbers().map((_, i) => {
+            return (
+              <span
+                onClick={() => handlePage(i + 1)}
+                key={i}
+                style={{
+                  border: "0.5px solid #ccc",
+                  padding: "8px 15px",
 
-                    cursor: "pointer",
-                    backgroundColor: page === i + 1 ? "#1976d2" : "white",
-                    color: page === i + 1 ? "white" : "black",
-                  }}
-                >
-                  {i + 1}
-                </span>
-              );
-            }
-          )}
+                  cursor: "pointer",
+                  backgroundColor: page === i + 1 ? "#1976d2" : "white",
+                  color: page === i + 1 ? "white" : "black",
+                }}
+              >
+                {i + 1}
+              </span>
+            );
+          })}
         </span>
         <Button
           onClick={() => handlePage(page + 1)}
