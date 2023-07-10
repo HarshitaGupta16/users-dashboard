@@ -11,14 +11,7 @@ const DashboardContextProvider = ({ children }) => {
     message: "",
     type: "success",
   });
-  const [userDetails, setUserDetails] = useState([
-    {
-      uid: "tQ173fdZ7qdhVCvA2UWQHaFCmk32",
-      imageURL:
-        "https://firebasestorage.googleapis.com/v0/b/users-dashboard-ui.appspot.com/o/images%2Fgirl.jfifa67f630b-d635-4b8c-847f-c8fe879b7189?alt=media&token=fc25ca45-fa8f-4ce4-8e50-905b72f5850b",
-      name: "Super Admin",
-    },
-  ]);
+  const [userDetails, setUserDetails] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [role, setRole] = useState("");
 
