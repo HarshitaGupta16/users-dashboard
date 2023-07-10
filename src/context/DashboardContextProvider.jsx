@@ -13,6 +13,8 @@ const DashboardContextProvider = ({ children }) => {
   });
   const [isAdmin, setIsAdmin] = useState(false);
   const [role, setRole] = useState("");
+  const [profilePic, setProfilePic] = useState("");
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     onAuthStateChanged(auth, (user) => {

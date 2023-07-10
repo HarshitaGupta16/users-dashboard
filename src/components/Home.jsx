@@ -7,11 +7,10 @@ import { db } from "../firebase";
 import DisplayUsers from "./DisplayUsers";
 
 const Home = () => {
-  const { user, setIsAdmin } = useDashboardContext();
+  const { user, setIsAdmin, setProfilePic, setUserName } =
+    useDashboardContext();
 
   const [showCreateUser, setShowCreateUser] = useState(false);
-  const [profilePic, setProfilePic] = useState("");
-  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     getData();
@@ -40,11 +39,7 @@ const Home = () => {
 
   return (
     <div>
-      <Header
-        title={showCreateUser ? "Create Users" : "Users"}
-        profilePic={profilePic}
-        userName={userName}
-      />
+      <Header title={showCreateUser ? "Create Users" : "Users"} />
       {showCreateUser ? (
         <div style={{ display: "flex", justifyContent: "center" }}>
           <CreateUser />
