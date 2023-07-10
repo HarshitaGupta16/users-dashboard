@@ -23,7 +23,6 @@ const DisplayUsers = () => {
   const [sortBy, setSortBy] = useState({ column: "", type: "ASC" });
   const [searchText, setSearchText] = useState("");
   const [loading, setLoading] = useState(false);
-  const [searchedResults, setSearchedResults] = useState([]);
 
   const navigate = useNavigate();
 
@@ -54,11 +53,29 @@ const DisplayUsers = () => {
 
   const { setAlert, role } = useDashboardContext();
 
+  let filteredUsersBySearch = sortedUsers;
+
+  if (searchText.trim() !== "") {
+    filteredUsersBySearch = sortedUsers.filter(
+      (user) =>
+        user.name.toLowerCase().includes(searchText) ||
+        user.email.toLowerCase().includes(searchText) ||
+        user.role.toLowerCase().includes(searchText) ||
+        user.type.toLowerCase().includes(searchText) ||
+        user.status.toLowerCase().includes(searchText)
+    );
+  }
+
+  let filteredUsersByRole = filteredUsersBySearch;
+  if (role !== "All" && role !== "") {
+    filteredUsersByRole = filteredUsersBySearch.filter(
+      (user) => user.role === role
+    );
+  }
+
   const getUsers = async () => {
-    setLoading(true);
     const data = await getDocs(usersCollectionRef);
     setUsers(data.docs.map((doc) => doc.data()));
-    setLoading(false);
   };
 
   const handleUpdate = async (id, name, email, role, type, status) => {
@@ -142,16 +159,8 @@ const DisplayUsers = () => {
     }
   };
 
-  useEffect(() => {
-    handleSearch();
-  }, [role]);
-
   const paginationNumbers = () => {
-    if (searchText !== "" || role !== "All" || role !== "")
-      return [...Array(Math.ceil(sortedUsers.length / 5))];
-    else {
-      return [...Array(Math.ceil(handleSearch(sortedUsers).length / 5))];
-    }
+    return [...Array(Math.ceil(filteredUsersByRole.length / 5))];
   };
 
   const columns = ["Name", "Email", "Role", "Type", "Status", ""];
@@ -221,22 +230,11 @@ const DisplayUsers = () => {
         <div className={styles.body}>
           {loading ? (
             <CircularProgress />
-          ) : searchText !== "" || role !== "All" || role !== "" ? (
-            searchedResults.slice(page * 5 - 5, page * 5).map((user, i) => {
-              return (
-                <SingleUser
-                  key={i}
-                  user={user}
-                  handleDelete={handleDelete}
-                  handleUpdate={handleUpdate}
-                />
-              );
-            })
           ) : (
-            sortedUsers.slice(page * 5 - 5, page * 5).map((user, i) => {
+            filteredUsersByRole.slice(page * 5 - 5, page * 5).map((user, i) => {
               return (
                 <SingleUser
-                  key={i}
+                  key={user.uid}
                   user={user}
                   handleDelete={handleDelete}
                   handleUpdate={handleUpdate}
@@ -244,11 +242,6 @@ const DisplayUsers = () => {
               );
             })
           )}
-          {searchedResults.length === 0 &&
-            !loading &&
-            (searchText !== "" || role !== "" || role !== "All") && (
-              <div style={{ alignSelf: "center" }}>No data found</div>
-            )}
         </div>
       </div>
       <div className={styles.pagination}>

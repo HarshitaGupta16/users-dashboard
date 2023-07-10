@@ -62,7 +62,7 @@ const CreateUser = () => {
               type: type,
               status: status,
               uid: result.user.uid,
-              imgURL: imageURL,
+              imageURL: imageURL,
             });
             setUserDetails((prevState) => [
               ...prevState,
@@ -77,6 +77,7 @@ const CreateUser = () => {
               message: "User Created Sucessfully!",
               type: "success",
             });
+            setLoading(false);
           })
           .catch((error) => {
             setAlert({
@@ -84,6 +85,7 @@ const CreateUser = () => {
               message: error.message,
               type: "error",
             });
+            setLoading(false);
           });
       });
 
@@ -93,7 +95,6 @@ const CreateUser = () => {
       setRole("");
       setStatus("");
       setType("");
-      setLoading(false);
     } catch (error) {
       setAlert({
         open: true,
@@ -198,6 +199,7 @@ const CreateUser = () => {
           />
           <AddPhotoAlternateIcon style={{ marginRight: 35 }} />
           Upload Profile Picture *
+          <span style={{ marginLeft: 10 }}>{image?.name}</span>
         </label>
         <Button
           variant="contained"

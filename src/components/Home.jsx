@@ -13,9 +13,9 @@ const Home = () => {
   const [profilePic, setProfilePic] = useState("");
   const [role, setRole] = useState("");
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  useEffect(() => {
+    getData();
+  }, []);
 
   const getData = async () => {
     const userData = query(

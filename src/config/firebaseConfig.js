@@ -1,10 +1,10 @@
 const firebaseConfig = {
-  apiKey: "AIzaSyAGv26-MyU4ohwNqQQ9jKx0MviFT4zsvqw",
-  authDomain: "users-dashboard-ui.firebaseapp.com",
-  projectId: "users-dashboard-ui",
-  storageBucket: "users-dashboard-ui.appspot.com",
-  messagingSenderId: "1089547667349",
-  appId: "1:1089547667349:web:d50fb041bd75b7eee0589c",
+  apiKey: "AIzaSyBHaCtZwbBwa0Kne51MmUFqy_teI8W8b4k",
+  authDomain: "users-dashboard-app.firebaseapp.com",
+  projectId: "users-dashboard-app",
+  storageBucket: "users-dashboard-app.appspot.com",
+  messagingSenderId: "456093375812",
+  appId: "1:456093375812:web:957b651f045b8adf534b11",
 };
 
 export default firebaseConfig;
