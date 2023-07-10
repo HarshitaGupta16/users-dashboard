@@ -36,6 +36,10 @@ const DashboardContextProvider = ({ children }) => {
         setIsAdmin,
         role,
         setRole,
+        profilePic,
+        setProfilePic,
+        userName,
+        setUserName,
       }}
     >
       {children}
