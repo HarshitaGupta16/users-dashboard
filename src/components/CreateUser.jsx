@@ -87,6 +87,7 @@ const CreateUser = () => {
       setRole("");
       setStatus("");
       setType("");
+      setImage("");
     } catch (error) {
       setAlert({
         open: true,
