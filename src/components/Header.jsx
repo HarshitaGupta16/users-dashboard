@@ -6,21 +6,14 @@ import {
   SvgIcon,
   Typography,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Logout from "./Logout";
 import { useDashboardContext } from "../context/DashboardContextProvider";
 import PersonSearchIcon from "@mui/icons-material/PersonSearch";
 
-const Header = ({ title }) => {
-  const { userDetails, user, setRole } = useDashboardContext();
-  const [profilePicURL, setProfilePicURL] = useState("");
-  const [userName, setUserName] = useState("");
+const Header = ({ title, profilePic, userName }) => {
+  const { setRole } = useDashboardContext();
 
-  useEffect(() => {
-    const info = userDetails?.find((userDetail) => userDetail.uid === user.uid);
-    setProfilePicURL(info?.imageURL);
-    setUserName(info?.name);
-  }, []);
   return (
     <div
       style={{
@@ -38,7 +31,7 @@ const Header = ({ title }) => {
           Welcome! {userName}
         </span>
         <Avatar
-          src={profilePicURL}
+          src={profilePic}
           sx={{ width: 56, height: 56, marginRight: 10 }}
         />
         <Box sx={{ marginRight: 5 }}>

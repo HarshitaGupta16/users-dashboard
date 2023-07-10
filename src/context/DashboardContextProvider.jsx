@@ -11,7 +11,6 @@ const DashboardContextProvider = ({ children }) => {
     message: "",
     type: "success",
   });
-  const [userDetails, setUserDetails] = useState([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [role, setRole] = useState("");
 
@@ -31,8 +30,6 @@ const DashboardContextProvider = ({ children }) => {
         alert,
         setAlert,
         user,
-        userDetails,
-        setUserDetails,
         isAdmin,
         setIsAdmin,
         role,

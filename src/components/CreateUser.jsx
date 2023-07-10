@@ -29,7 +29,7 @@ const CreateUser = () => {
   const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const { setAlert, setUserDetails } = useDashboardContext();
+  const { setAlert } = useDashboardContext();
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -64,14 +64,6 @@ const CreateUser = () => {
               uid: result.user.uid,
               imageURL: imageURL,
             });
-            setUserDetails((prevState) => [
-              ...prevState,
-              {
-                uid: result.user.uid,
-                imageURL: imageURL,
-                name: name,
-              },
-            ]);
             setAlert({
               open: true,
               message: "User Created Sucessfully!",

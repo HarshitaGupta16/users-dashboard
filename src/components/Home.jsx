@@ -11,7 +11,7 @@ const Home = () => {
 
   const [showCreateUser, setShowCreateUser] = useState(false);
   const [profilePic, setProfilePic] = useState("");
-  const [role, setRole] = useState("");
+  const [userName, setUserName] = useState("");
 
   useEffect(() => {
     getData();
@@ -27,6 +27,7 @@ const Home = () => {
       // doc.data() is never undefined for query doc snapshots
       console.log(doc.data());
       setProfilePic(doc.data().imageURL);
+      setUserName(doc.data().name);
       if (doc.data().role === "Administrator") {
         setShowCreateUser(true);
         setIsAdmin(true);
@@ -42,6 +43,7 @@ const Home = () => {
       <Header
         title={showCreateUser ? "Create Users" : "Users"}
         profilePic={profilePic}
+        userName={userName}
       />
       {showCreateUser ? (
         <div style={{ display: "flex", justifyContent: "center" }}>
