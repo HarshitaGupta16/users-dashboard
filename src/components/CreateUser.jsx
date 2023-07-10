@@ -215,7 +215,7 @@ const CreateUser = () => {
       <sapn style={{ fontSize: "1.2rem" }}>
         Click here to view all the{" "}
         <Link to="/display-users" className={styles.link}>
-          users
+          Users
         </Link>
       </sapn>
     </div>
